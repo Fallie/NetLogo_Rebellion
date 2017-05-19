@@ -10,6 +10,10 @@ public class Person {
 
     private Patch currentPatch;
 
+    /**
+     * The constructor of person class.
+     * @param currentPatch
+     */
     public Person(Patch currentPatch) {
         this.currentPatch = currentPatch;
     }

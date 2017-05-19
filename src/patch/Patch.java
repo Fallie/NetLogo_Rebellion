@@ -6,10 +6,15 @@ import java.util.ArrayList;
 public class Patch {
 
 
-    private ArrayList<Person> persons;
+    private ArrayList<Person> persons = new ArrayList<Person>();
 
-    public Patch(ArrayList<Person> persons) {
-        this.persons = persons;
+    private int x;
+
+    private int y;
+
+    public Patch(int x, int y) {
+        this.x = x;
+        this.y = y;
     }
 
     public ArrayList<Person> getNeiborhood(){return null;}

@@ -12,10 +12,12 @@ public class Agent extends Person {
 
     public int jailTerm;
 
-    public void determinBehavior(){
-
-    }
-
+    /**
+     * The constructor of agent class.
+     * @param currentPatch
+     * @param isActive
+     * @param jailTerm
+     */
     public Agent(Patch currentPatch, boolean isActive, int jailTerm) {
         super(currentPatch);
         this.isActive = isActive;
@@ -27,6 +29,10 @@ public class Agent extends Person {
     }
 
     public void returnArrestProbability(){
+
+    }
+
+    public void determinBehavior(){
 
     }
 
