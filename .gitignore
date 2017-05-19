@@ -1,7 +1,8 @@
 ## Java
 
 *.class
-*.idea/
+.idea/*
 *.iml
 out/
 temp/
+*.xml
