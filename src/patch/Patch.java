@@ -9,6 +9,8 @@ public class Patch {
 
     private ArrayList<Person> persons = new ArrayList<Person>();
 
+    private ArrayList<Patch> neighborhood = new ArrayList<Patch>();
+
     private int x;
 
     private int y;
@@ -16,9 +18,10 @@ public class Patch {
     public Patch(int x, int y) {
         this.x = x;
         this.y = y;
+        this.cacheNeiborhood();
     }
 
-    public ArrayList<Patch> getNeiborhood(){
+    public void cacheNeiborhood(){
 
         ArrayList<Patch> neighbors = new ArrayList<Patch>();
         int xVision = x + World.vision;
@@ -31,15 +34,26 @@ public class Patch {
             }
         }
 
-        return neighbors;
+        this.neighborhood = neighbors;
+    }
+
+    public ArrayList<Patch> getNeighborhood() {
+        return neighborhood;
     }
 
     public Person getPerson() {
         return persons.get(0);
     }
 
-    public void setPersons(ArrayList<Person> persons) {
-        this.persons = persons;
+    public void setPerson(Person newPerson) {
+        if(this.persons.size() != 0){
+            for(int i = this.persons.size()-1; i <= 0; i--){
+                this.persons.add(i+1,this.persons.get(i));
+            }
+
+        }
+        this.persons.add(0,newPerson);
+
     }
 
 }
