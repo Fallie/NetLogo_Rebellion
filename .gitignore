@@ -6,3 +6,4 @@
 out/
 temp/
 *.xml
+.idea/workspace.xml
