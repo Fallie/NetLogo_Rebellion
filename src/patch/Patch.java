@@ -2,6 +2,7 @@ package patch;
 
 import person.Person;
 import java.util.ArrayList;
+import world.World;
 
 public class Patch {
 
@@ -17,10 +18,24 @@ public class Patch {
         this.y = y;
     }
 
-    public ArrayList<Person> getNeiborhood(){return null;}
+    public ArrayList<Patch> getNeiborhood(){
 
-    public ArrayList<Person> getPersons() {
-        return persons;
+        ArrayList<Patch> neighbors = new ArrayList<Patch>();
+        int xVision = x + World.vision;
+        int yVision  = y + World.vision;
+
+        //wrapping the patches in the world
+        for(int i = x; i < xVision% World.numOfPathes; i ++){
+            for(int j = y; j< yVision% World.numOfPathes; j ++){
+                neighbors.add(World.patches[i-1][j-1]);
+            }
+        }
+
+        return neighbors;
+    }
+
+    public Person getPerson() {
+        return persons.get(0);
     }
 
     public void setPersons(ArrayList<Person> persons) {

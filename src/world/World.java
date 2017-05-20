@@ -1,6 +1,7 @@
+package world;
+
 import patch.Patch;
 import person.Agent;
-import person.Person;
 
 /**
  * The driver used to simulate the NetLogo_Rebellion.
@@ -11,9 +12,8 @@ import person.Person;
 public class World {
 
 
-
         //
-        private int numOfPathes;
+        public static int numOfPathes;
 
         //
         private int numOfCops;
@@ -31,7 +31,7 @@ public class World {
         private boolean movement;
 
         //
-        private int vision;
+        public static int vision;
 
         //
         private boolean watchOne;
@@ -40,10 +40,10 @@ public class World {
         private int ticks;
 
         //
-        private Patch[][] patches;
+        public static Patch[][] patches;
 
         //
-        private Agent[] agents;
+        public static Agent[] agents;
 
         /**
          * The constructor of world class.
@@ -79,7 +79,7 @@ public class World {
             patches = new Patch[numOfPathes][numOfPathes];
             for(int i = 0; i < patches.length; i ++){
                 for(int j = 0; j < patches[i].length; j ++){
-                    patches[i][j] = new Patch(i,j);
+                    patches[i][j] = new Patch(i+1,j+1);
                 }
             }
 

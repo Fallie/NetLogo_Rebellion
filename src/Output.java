@@ -1,3 +1,5 @@
+import world.World;
+
 import java.io.IOException;
 
 /**
@@ -27,6 +29,8 @@ public class Output {
         double numOfAgents = numOfPathes*numOfPathes*initialAgentDensity;
 
         double numOfCops = numOfPathes*numOfPathes*initialCopDensity;
+
+
 
         World world = new World(numOfPathes, (int)numOfAgents, (int)numOfCops,
         governmentLegitimacy, maxJailTerm, movement, vision, watchOne, ticks);
