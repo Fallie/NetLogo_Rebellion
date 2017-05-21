@@ -25,13 +25,13 @@ public class World {
 		private int numOfAgents;
 
 		//
-		private double governmentLegitimacy;
+		public static double governmentLegitimacy;
 
 		//
 		private double maxJailTerm;
 
 		//
-		private boolean movement;
+		public static boolean movement;
 
 		//
 		public static int vision;
@@ -108,7 +108,7 @@ public class World {
 
 			Patch currentPatch = randPatch();
 
-			Agent agent= new Agent(currentPatch, false, 0);
+			Agent agent= new Agent(currentPatch, false);
 
 			currentPatch.setPerson(agent);
 
@@ -131,7 +131,7 @@ public class World {
 			Patch patch;
 
 			while(true) {
-				patch = patches[randInt(0,numOfPathes)][randInt(0,numOfPathes)];
+				patch = patches[randInt(0,numOfPathes-1)][randInt(0,numOfPathes-1)];
 				if(patch.getPerson() == null) break;
 			}
 

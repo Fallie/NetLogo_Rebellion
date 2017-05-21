@@ -1,5 +1,7 @@
 package patch;
 
+import person.Agent;
+import person.Cop;
 import person.Person;
 import java.util.ArrayList;
 import world.World;
@@ -18,10 +20,11 @@ public class Patch {
     public Patch(int x, int y) {
         this.x = x;
         this.y = y;
-        this.cacheNeiborhood();
+        this.updateNeighborhood();
     }
 
-    public void cacheNeiborhood(){
+
+    public void updateNeighborhood(){
 
         ArrayList<Patch> neighbors = new ArrayList<Patch>();
         int xVision = x + World.vision;
@@ -41,19 +44,71 @@ public class Patch {
         return neighborhood;
     }
 
-    public Person getPerson() {
-        return persons.get(0);
+    public ArrayList<Person> getPerson() {
+        return persons;
     }
 
     public void setPerson(Person newPerson) {
-        if(this.persons.size() != 0){
-            for(int i = this.persons.size()-1; i <= 0; i--){
-                this.persons.add(i+1,this.persons.get(i));
-            }
 
+        this.persons.add(newPerson);
+    }
+
+    public void removePerson(Person leftPerson){
+        this.persons.remove(leftPerson);
+    }
+
+    public boolean isMoveable(){
+
+        //if the persons is null, return true
+        if(persons == null) return true;
+
+        //if the all the person on this patch has jail term > 0, return true
+        for(Person person : this.persons){
+            if(person.getJailTerm()==0) return false;
         }
-        this.persons.add(0,newPerson);
+        return true;
+    }
 
+    public int[] countInNeighborhood(){
+        int cops = 0;
+        int activeAgents= 0;
+        for(Patch patch : neighborhood){
+            if(patch.isCop()) cops ++;
+            if(patch.isActiveAgent()) activeAgents ++;
+        }
+        return new int[]{cops,activeAgents};
+    }
+
+    private boolean isCop(){
+
+        for(Person person : this.persons){
+            if(person instanceof Cop) return true;
+        }
+        return false;
+    }
+
+    private boolean isActiveAgent(){
+
+        for(Person person : this.persons){
+            if(person instanceof Agent && ((Agent) person).isActive()) return true;
+        }
+        return false;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
     }
 
 }

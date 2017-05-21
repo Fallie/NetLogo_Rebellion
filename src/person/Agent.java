@@ -1,6 +1,11 @@
 package person;
 
+import configuration.Configuration;
 import patch.Patch;
+import world.World;
+
+import static java.lang.Math.exp;
+
 
 /**
  * Created by fallie on 15/5/17.
@@ -10,29 +15,32 @@ public class Agent extends Person {
 
     private boolean isActive;
 
-    public int jailTerm;
 
     /**
      * The constructor of agent class.
      * @param currentPatch
      * @param isActive
-     * @param jailTerm
      */
-    public Agent(Patch currentPatch, boolean isActive, int jailTerm) {
+    public Agent(Patch currentPatch, boolean isActive) {
         super(currentPatch);
         this.isActive = isActive;
-        this.jailTerm = jailTerm;
     }
 
-    public void returnGrievance(){
+    public double returnGrievance(){
+        return Configuration.PERCEIVED_HARDSHIP * (1 - World.governmentLegitimacy);
 
     }
 
-    public void returnArrestProbability(){
-
+    public double returnArrestProbability(){
+        int[] counts = getCurrentPatch().countInNeighborhood();
+        return 1 -  exp(- Configuration.ARREST_FACTOR * (counts[0] / counts[1]));
     }
 
     public void determinBehavior(){
+        if(returnGrievance() - Configuration.RISK_VERSION * returnArrestProbability()
+            > Configuration.REBEL_THRESHOLD){
+            this.isActive = true;
+        }
 
     }
 
@@ -40,15 +48,5 @@ public class Agent extends Person {
         return isActive;
     }
 
-    public void setActive(boolean active) {
-        isActive = active;
-    }
 
-    public int getJailTerm() {
-        return jailTerm;
-    }
-
-    public void setJailTerm(int jailTerm) {
-        this.jailTerm = jailTerm;
-    }
 }
