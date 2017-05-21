@@ -30,8 +30,7 @@ public class Person {
     public void move(){
 
         ArrayList<Patch> tempNeighborhood = new ArrayList<Patch>();
-        //only when a cop or an innocent agent can move
-        if(World.movement && this instanceof Cop && jailTerm == 0){
+        if(World.movement && this instanceof Cop){
 
             for(Patch patch : currentPatch.getNeighborhood()){
                 if(patch.isMoveable()) tempNeighborhood.add(patch);
@@ -61,6 +60,8 @@ public class Person {
     public void setJailTerm(int jailTerm) {
         this.jailTerm = jailTerm;
     }
+
+    public void reduceJailTerm(){ this.jailTerm --; }
 
     public int getJailTerm() {
 

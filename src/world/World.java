@@ -3,7 +3,9 @@ package world;
 import patch.Patch;
 import person.Agent;
 import person.Cop;
+import person.Person;
 
+import java.util.HashSet;
 import java.util.Random;
 
 /**
@@ -103,7 +105,20 @@ public class World {
 		public void go(int ticks){
 
 			for(int i = ticks; i > 0; i--){
-				
+
+				for(Agent agent : agents){
+					if(agent.getJailTerm() == 0) agent.determinBehavior();
+					else agent.reduceJailTerm();
+				}
+
+				for(Cop cop : cops){
+					cop.enforce();
+				}
+
+				randMove(agents);
+
+				randMove(cops);
+
 			}
 
 		}
@@ -154,6 +169,29 @@ public class World {
 
 			return randomNum;
 		}
+
+		private void randMove(Person[] array){
+
+			HashSet<Integer> remaining = new HashSet<Integer>();
+			for (int i = 0; i < array.length; i++) {
+				remaining.add(i);
+			}
+			int step = 0;
+			boolean isAgentArray = false;
+			if(array[0] instanceof Agent) isAgentArray = true;
+			//select from remaining index when remaining is not empty
+			while (!remaining.isEmpty()) {
+				int index = randInt(0,remaining.size()-1);
+				//move agents and cops here
+				if(isAgentArray)
+				agents[index].move();
+				else cops[index].move();
+				remaining.remove(index);
+				step++;
+			}
+			System.out.println("Finished after " + step + " iterations.");
+		}
+
 
 
 }
