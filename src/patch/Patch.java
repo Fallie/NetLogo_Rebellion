@@ -87,12 +87,19 @@ public class Patch {
         return false;
     }
 
-    private boolean isActiveAgent(){
+    public boolean isActiveAgent(){
 
         for(Person person : this.persons){
             if(person instanceof Agent && ((Agent) person).isActive()) return true;
         }
         return false;
+    }
+
+    public Agent getSuspect(){
+        for(Person person : persons){
+            if(person instanceof Agent && ((Agent) person).isActive()) return (Agent)person;
+        }
+        return null;
     }
 
     public int getX() {

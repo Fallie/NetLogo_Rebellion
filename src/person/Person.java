@@ -30,8 +30,8 @@ public class Person {
     public void move(){
 
         ArrayList<Patch> tempNeighborhood = new ArrayList<Patch>();
-
-        if(World.movement && this instanceof Cop){
+        //only when a cop or an innocent agent can move
+        if(World.movement && this instanceof Cop && jailTerm == 0){
 
             for(Patch patch : currentPatch.getNeighborhood()){
                 if(patch.isMoveable()) tempNeighborhood.add(patch);

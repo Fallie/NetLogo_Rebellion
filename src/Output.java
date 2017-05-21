@@ -16,7 +16,7 @@ public class Output {
 
         double governmentLegitimacy = Double.parseDouble(args[3]);;
 
-        double maxJailTerm = Double.parseDouble(args[4]);;
+        int maxJailTerm = Integer.parseInt(args[4]);;
 
         boolean movement = Boolean.parseBoolean(args[5]);
 

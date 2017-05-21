@@ -28,7 +28,7 @@ public class World {
 		public static double governmentLegitimacy;
 
 		//
-		private double maxJailTerm;
+		public static int maxJailTerm;
 
 		//
 		public static boolean movement;
@@ -63,7 +63,7 @@ public class World {
 		 * @param ticks
 		 */
 		public World(int numOfPathes, int numOfAgents, int numOfCops,
-					 double governmentLegitimacy, double maxJailTerm, boolean movement,
+					 double governmentLegitimacy, int maxJailTerm, boolean movement,
 					 int vision, boolean watchOne, int ticks) {
 			this.numOfPathes = numOfPathes;
 			this.numOfAgents = numOfAgents;
@@ -101,6 +101,10 @@ public class World {
 		}
 
 		public void go(int ticks){
+
+			for(int i = ticks; i > 0; i--){
+				
+			}
 
 		}
 

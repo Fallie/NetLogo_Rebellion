@@ -5,6 +5,8 @@ import patch.Patch;
 import world.World;
 
 import static java.lang.Math.exp;
+import static world.World.maxJailTerm;
+import static world.World.randInt;
 
 
 /**
@@ -46,6 +48,11 @@ public class Agent extends Person {
 
     public boolean isActive() {
         return isActive;
+    }
+
+    public void arrest(){
+        this.isActive = false;
+        this.setJailTerm(randInt(0, maxJailTerm));
     }
 
 
