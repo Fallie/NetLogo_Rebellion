@@ -4,10 +4,13 @@ import person.Agent;
 import person.Cop;
 import person.Person;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
+
 import world.World;
 
 public class Patch {
-
+    Logger logger = Logger.getLogger("Patch");
 
     private ArrayList<Person> persons = new ArrayList<Person>();
 
@@ -20,24 +23,44 @@ public class Patch {
     public Patch(int x, int y) {
         this.x = x;
         this.y = y;
-        this.updateNeighborhood();
     }
 
 
     public void updateNeighborhood(){
 
         ArrayList<Patch> neighbors = new ArrayList<Patch>();
-        int xVision = x + World.vision;
-        int yVision  = y + World.vision;
 
-        //wrapping the patches in the world
-        for(int i = x; i < xVision% World.numOfPathes; i ++){
-            for(int j = y; j< yVision% World.numOfPathes; j ++){
-                neighbors.add(World.patches[i-1][j-1]);
-            }
+        //x-axis
+        //right
+        for(int i = y + 1; i <= y + World.vision; i ++){
+            neighbors.add(World.patches[x][(i % World.numOfPathes + World.numOfPathes) % World.numOfPathes]);
+        }
+        //left
+        for(int i = y - 1; i >= y - World.vision; i --){
+            neighbors.add(World.patches[x][(i % World.numOfPathes + World.numOfPathes) % World.numOfPathes]);
+        }
+
+        //y-axis
+        //right
+        for(int i = x + 1; i <= x + World.vision; i ++){
+            neighbors.add(World.patches[(i % World.numOfPathes + World.numOfPathes) % World.numOfPathes][y]);
+        }
+        //left
+        for(int i = x - 1; i >= x - World.vision; i --) {
+            neighbors.add(World.patches[(i % World.numOfPathes + World.numOfPathes) % World.numOfPathes][y]);
         }
 
         this.neighborhood = neighbors;
+        //logger.info("updated neighbor for x = " + x + " y = " + y);
+
+//        if(x == 0 && y ==0){
+//            for(Patch patch : neighborhood){
+//                logger.info("neighbor for (0 , 0 ) is x = " + patch.getX() + " y = " + patch.getY());
+//            }
+//
+//        }
+
+        //logger.info("updating for patch x = " + x + " y = " + y);
     }
 
     public ArrayList<Patch> getNeighborhood() {

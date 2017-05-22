@@ -30,7 +30,7 @@ public class Person {
     public void move(){
 
         ArrayList<Patch> tempNeighborhood = new ArrayList<Patch>();
-        if(World.movement && this instanceof Cop){
+        if(World.movement || this instanceof Cop){
 
             for(Patch patch : currentPatch.getNeighborhood()){
                 if(patch.isMoveable()) tempNeighborhood.add(patch);

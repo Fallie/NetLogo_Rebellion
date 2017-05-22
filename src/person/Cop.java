@@ -4,6 +4,7 @@ import patch.Patch;
 import world.World;
 
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 import static world.World.randInt;
 
@@ -12,11 +13,13 @@ import static world.World.randInt;
  */
 public class Cop extends Person {
 
+    Logger logger = Logger.getLogger("Patch");
     public Cop(Patch currentPatch) {
         super(currentPatch);
     }
 
     public void enforce(){
+        logger.info("cop is enforcing");
         int[] counts = getCurrentPatch().countInNeighborhood();
         ArrayList<Patch> tempNeighborhood = new ArrayList<Patch>();
         if(counts[1]!=0){

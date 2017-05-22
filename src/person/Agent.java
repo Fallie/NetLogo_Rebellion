@@ -4,6 +4,8 @@ import configuration.Configuration;
 import patch.Patch;
 import world.World;
 
+import java.util.logging.Logger;
+
 import static java.lang.Math.exp;
 import static world.World.maxJailTerm;
 import static world.World.randInt;
@@ -14,7 +16,7 @@ import static world.World.randInt;
  */
 public class Agent extends Person {
 
-
+    Logger logger = Logger.getLogger("Agent");
     private boolean isActive;
 
 
@@ -35,10 +37,12 @@ public class Agent extends Person {
 
     public double returnArrestProbability(){
         int[] counts = getCurrentPatch().countInNeighborhood();
-        return 1 -  exp(- Configuration.ARREST_FACTOR * (counts[0] / counts[1]));
+        //logger.info("cops: " + counts[0] + " active: " + counts[1]);
+        return 1 -  exp(- Configuration.ARREST_FACTOR * (counts[0] / (1+counts[1])));
     }
 
     public void determinBehavior(){
+        logger.info("determing behavior");
         if(returnGrievance() - Configuration.RISK_VERSION * returnArrestProbability()
             > Configuration.REBEL_THRESHOLD){
             this.isActive = true;

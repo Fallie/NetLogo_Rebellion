@@ -1,6 +1,7 @@
 import world.World;
 
 import java.io.IOException;
+import java.io.FileWriter;
 
 /**
  * Created by fallie on 15/5/17.
@@ -10,13 +11,13 @@ public class Output {
 
         int numOfPathes = Integer.parseInt(args[0]);
 
-        double initialCopDensity = Double.parseDouble(args[1]);
+        double initialAgentDensity = Double.parseDouble(args[1]);
 
-        double initialAgentDensity = Double.parseDouble(args[2]);;
+        double initialCopDensity = Double.parseDouble(args[2]);
 
-        double governmentLegitimacy = Double.parseDouble(args[3]);;
+        double governmentLegitimacy = Double.parseDouble(args[3]);
 
-        int maxJailTerm = Integer.parseInt(args[4]);;
+        int maxJailTerm = Integer.parseInt(args[4]);
 
         boolean movement = Boolean.parseBoolean(args[5]);
 
@@ -39,6 +40,5 @@ public class Output {
 
         world.go(ticks);
 
-//        System.out.println("hello");
     }
 }

@@ -5,8 +5,10 @@ import person.Agent;
 import person.Cop;
 import person.Person;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Random;
+import java.util.logging.Logger;
 
 /**
  * The driver used to simulate the NetLogo_Rebellion.
@@ -52,6 +54,8 @@ public class World {
 
 		public static Cop[] cops;
 
+		Logger logger = Logger.getLogger("World");
+
 		/**
 		 * The constructor of world class.
 		 * @param numOfPathes
@@ -82,28 +86,41 @@ public class World {
 		 * To setup the model to make it ready to run.
 		 */
 		public void setup(){
+
+			logger.info("begin setting up the world");
+			logger.info("begin setting up the patches");
 			//Initialize the patches in the world.
 			patches = new Patch[numOfPathes][numOfPathes];
 			for(int i = 0; i < patches.length; i ++){
 				for(int j = 0; j < patches[i].length; j ++){
-					patches[i][j] = new Patch(i+1,j+1);
+					patches[i][j] = new Patch(i,j);
+					//logger.info("generated x = " + i + "y = " + j);
 				}
 			}
-
+			logger.info("begin setting up the agents");
 			//Generate agents and cops.
 			agents = new Agent[numOfAgents];
-			for(int k = 0; k < agents.length; k ++){
+			for(int k = 0; k < numOfAgents; k ++){
 				agents[k] = generateAgent();
 			}
-
+			logger.info("begin setting up the cops");
 			cops = new Cop[numOfCops];
-			for(int k = 0; k < agents.length; k ++){
+			for(int k = 0; k < numOfCops; k ++){
 				cops[k] = generateCop();
 			}
+			logger.info("finished setting up the cops");
+			logger.info("begin updating neighbors");
+			for(int k = 0; k < patches.length; k ++){
+				for(int j = 0; j < patches[k].length; j ++){
+					patches[k][j].updateNeighborhood();
+				}
+			}
+			logger.info("finished updating neighbors");
 		}
 
 		public void go(int ticks){
-
+			logger.info("begin run the world");
+			int it= 0;
 			for(int i = ticks; i > 0; i--){
 
 				for(Agent agent : agents){
@@ -115,17 +132,33 @@ public class World {
 					cop.enforce();
 				}
 
-				randMove(agents);
+				for(int k = 0; k < patches.length; k ++){
+					for(int j = 0; j < patches[k].length; j ++){
+						patches[k][j].updateNeighborhood();
+					}
+				}
 
+				logger.info("agents are moving randomly");
+				randMove(agents);
+				logger.info("cops are moving randomly");
 				randMove(cops);
 
+				it ++;
+				logger.info("world running iteration it :" + it);
 			}
+
+			logger.info("finished running the world");
 
 		}
 
 		public Agent generateAgent(){
 
+			logger.info("generateAgent method");
+
 			Patch currentPatch = randPatch();
+
+			logger.info("random patch: x = " + currentPatch.getX()+" y = " + currentPatch.getY());
+
 
 			Agent agent= new Agent(currentPatch, false);
 
@@ -145,14 +178,17 @@ public class World {
 			return cop;
 		}
 
-		public static Patch randPatch(){
+		public Patch randPatch(){
 
+			logger.info("randPatch method");
 			Patch patch;
+			logger.info("start randomly finding patch");
 
 			while(true) {
 				patch = patches[randInt(0,numOfPathes-1)][randInt(0,numOfPathes-1)];
-				if(patch.getPerson() == null) break;
+				if(patch.getPerson().size() == 0) break;
 			}
+			logger.info("finished randomly finding patch");
 
 			return patch;
 		}
@@ -171,25 +207,29 @@ public class World {
 		}
 
 		private void randMove(Person[] array){
-
-			HashSet<Integer> remaining = new HashSet<Integer>();
+			logger.info("randMoving starts");
+			ArrayList<Integer> remaining = new ArrayList<Integer>();
 			for (int i = 0; i < array.length; i++) {
 				remaining.add(i);
 			}
 			int step = 0;
 			boolean isAgentArray = false;
 			if(array[0] instanceof Agent) isAgentArray = true;
+
 			//select from remaining index when remaining is not empty
-			while (!remaining.isEmpty()) {
+			while (step<array.length) {
 				int index = randInt(0,remaining.size()-1);
-				//move agents and cops here
-				if(isAgentArray)
-				agents[index].move();
-				else cops[index].move();
-				remaining.remove(index);
-				step++;
+				if(remaining.get(index)>=0){
+					//move agents and cops here
+					if(isAgentArray)
+						agents[index].move();
+					else cops[index].move();
+					remaining.set(index,-1);
+					step++;
+					logger.info("this is the number " + step + "iteration.");
+				}
 			}
-			System.out.println("Finished after " + step + " iterations.");
+			logger.info("randmove finished after " + step + "iterations.");
 		}
 
 
