@@ -27,27 +27,49 @@ public class Patch {
 
         ArrayList<Patch> neighbors = new ArrayList<>();
 
-        //x-axis
-        //right
-        for(int i = y + 1; i <= y + World.vision; i ++){
-            neighbors.add(World.patches[x][(i % World.numOfPathes + World.numOfPathes) % World.numOfPathes]);
+        for (int offsetY = 1; offsetY <= World.numOfPathes; offsetY++) {
+            neighbors.add(GetPatch(x, y + offsetY));
+            neighbors.add(GetPatch(x, y - offsetY));
         }
-        //left
-        for(int i = y - 1; i >= y - World.vision; i --){
-            neighbors.add(World.patches[x][(i % World.numOfPathes + World.numOfPathes) % World.numOfPathes]);
-        }
+        for (int offsetX = 1; offsetX <= World.numOfPathes; offsetX++) {
+            int sq = (int) Math.sqrt(World.numOfPathes * World.numOfPathes - offsetX * offsetX);
+            neighbors.add(GetPatch(x + offsetX, y));
+            neighbors.add(GetPatch(x - offsetX, y));
 
-        //y-axis
-        //right
-        for(int i = x + 1; i <= x + World.vision; i ++){
-            neighbors.add(World.patches[(i % World.numOfPathes + World.numOfPathes) % World.numOfPathes][y]);
+            for (int offsetY = 1; offsetY <= sq; offsetY++) {
+                neighbors.add(GetPatch(x + offsetX, y + offsetY));
+                neighbors.add(GetPatch(x - offsetX, y + offsetY));
+                neighbors.add(GetPatch(x + offsetX, y - offsetY));
+                neighbors.add(GetPatch(x - offsetX, y - offsetY));
+            }
         }
-        //left
-        for(int i = x - 1; i >= x - World.vision; i --) {
-            neighbors.add(World.patches[(i % World.numOfPathes + World.numOfPathes) % World.numOfPathes][y]);
-        }
+        // //x-axis
+        // //right
+        // for(int i = y + 1; i <= y + World.vision; i ++){
+        //     neighbors.add(World.patches[x][(i + World.numOfPathes) % World.numOfPathes]);
+        // }
+        // //left
+        // for(int i = y - 1; i >= y - World.vision; i --){
+        //     neighbors.add(World.patches[x][(i  + World.numOfPathes) % World.numOfPathes]);
+        // }
+
+        // //y-axis
+        // //right
+        // for(int i = x + 1; i <= x + World.vision; i ++){
+        //     neighbors.add(World.patches[(i  + World.numOfPathes) % World.numOfPathes][y]);
+        // }
+        // //left
+        // for(int i = x - 1; i >= x - World.vision; i --) {
+        //     neighbors.add(World.patches[(i  + World.numOfPathes) % World.numOfPathes][y]);
+        // }
 
         return neighbors;
+    }
+
+    public Patch GetPatch(int x, int y)
+    {
+
+        return World.patches[ (x + World.numOfPathes) % World.numOfPathes][(y + World.numOfPathes) % World.numOfPathes];
     }
 
     public ArrayList<Person> getPerson() {

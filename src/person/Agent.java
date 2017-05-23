@@ -48,11 +48,11 @@ protected static Random r = new Random();
 
     public double returnArrestProbability(){
         int[] counts = getCurrentPatch().countInNeighborhood();
-        logger.info("cops: " + counts[0] + " active: " + counts[1]);
+        // logger.info("cops: " + counts[0] + " active: " + counts[1]);
         // return 1 -  exp(-1 * Configuration.ARREST_FACTOR * (counts[0] / (1+counts[1])) );
-        System.out.println("The arrest factor is that " +"["+ currentPatch.getX() + "," + currentPatch.getY() +" ]" + counts[0]  + "/" + (1+ counts[1]) );   
+        // System.out.println("The arrest factor is that " +"["+ currentPatch.getX() + "," + currentPatch.getY() +" ]" + counts[0]  + "/" + (1+ counts[1]) +" "+ (Math.exp(-Configuration.ARREST_FACTOR * Math.floor(counts[0] / (1+counts[1])) )));   
 
-        return 1 -  Math.exp(-Configuration.ARREST_FACTOR * Math.floor(counts[0] / (1+counts[1])) );
+        return 1 -  Math.exp(-Configuration.ARREST_FACTOR * (counts[0] / (1+counts[1])) );
     }
 
     public void determinBehavior(){
@@ -69,7 +69,7 @@ protected static Random r = new Random();
         // System.out.println(returnGrievance() +"-"+ this.riskAversion + "*" + returnArrestProbability() + " = " + (returnGrievance() - this.riskAversion * returnArrestProbability()));   
 
 
-        if(this.isActive) logger.info("***found an active agent here!!!!!");
+        // if(this.isActive) logger.info("***found an active agent here!!!!!");
 
     }
 
@@ -83,7 +83,7 @@ protected static Random r = new Random();
         {
             this.isActive = false;
         }
-        if(this.isActive) logger.info("***found an active agent with extension!!!!!");
+        // if(this.isActive) logger.info("***found an active agent with extension!!!!!");
     }
 
     private double averageGrievance(){

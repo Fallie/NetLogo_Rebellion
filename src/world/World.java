@@ -177,13 +177,15 @@ public class World {
 				}
 
 				// A rule
+
+
 				for(Agent agent : agents){
 					if(agent.getJailTerm() == 0){
 						if(this.extension) agent.extensionBehavior();
 						else agent.determinBehavior();
 					}
 				}
-
+				countAgents();
 				// C rule
 				for(Cop cop : cops){
 					cop.enforce();
@@ -194,12 +196,15 @@ public class World {
 				}
 
 				// for information
-				countAgents();
+				
 				it ++;
 				logger.info("world running iteration it :" + it);
 				//put the data into the row
 				data.put(it+1, new Object[] {it, quietAgent, jailedAgent ,activeAgent});
 
+
+				Collections.shuffle(Arrays.asList(agents));
+				Collections.shuffle(Arrays.asList(cops));
 				//logger.info("goverment value: " + governmentLegitimacy);
 			}
 
@@ -253,10 +258,10 @@ public class World {
 				for(int j =0; j <numOfPathes; j++)
 				{				
 					if (patches[i][j].getPerson().size() > 0) {
-						if (patches[i][j].getPerson().get(0) instanceof Cop) {
+						if (patches[i][j].isCop()) {
 							System.out.print("\t*");
 							continue;
-						} else if (((Agent)patches[i][j].getPerson().get(0)).isActive()) {
+						} else if (patches[i][j].isActiveAgent()) {
 							System.out.print("\tA");
 							continue;
 						}
@@ -364,9 +369,6 @@ public class World {
 		}
 
 		private void countAgents(){
-						int activeAgent = 0;
-			int jailedAgent = 0;
-			int quietAgent = 0;
 			for(Agent agent : agents){
 				if(agent.isActive()) activeAgent ++;
 				else if(agent.getJailTerm() > 0) jailedAgent ++;

@@ -19,7 +19,7 @@ public class Cop extends Person {
     }
 
     public void enforce(){
-        logger.info("cop is enforcing");
+        // logger.info("cop is enforcing");
         int[] counts = getCurrentPatch().countInNeighborhood();
         ArrayList<Patch> tempNeighborhood = new ArrayList<>();
         if(counts[1]!=0){
