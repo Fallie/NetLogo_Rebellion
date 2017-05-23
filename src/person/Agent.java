@@ -57,6 +57,10 @@ public class Agent extends Person {
             > Configuration.REBEL_THRESHOLD){
             this.isActive = true;
         }
+        else
+        {
+            this.isActive = false;
+        }
 
         if(this.isActive) logger.info("***found an active agent here!!!!!");
 
@@ -67,6 +71,10 @@ public class Agent extends Person {
         if(grievance - this.riskAversion * returnArrestProbability()
             - susceptibility * (grievance - averageGrievance())> Configuration.REBEL_THRESHOLD){
             this.isActive = true;
+        }
+        else
+        {
+            this.isActive = false;
         }
         if(this.isActive) logger.info("***found an active agent with extension!!!!!");
     }

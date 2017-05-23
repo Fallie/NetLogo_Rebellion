@@ -155,7 +155,8 @@ public class World {
 			//start running the world
 			int it= 0;
 			for(int i = ticks; i > 0; i--){
-
+				printPatch();
+				
 				resetCount();
 
 				if(it > 50 && this.graduallyChangeGov){
@@ -246,6 +247,33 @@ public class World {
 				e.printStackTrace();
 			}
 
+		}
+
+		public void printPatch()
+		{
+			for(int i =0; i <numOfPathes; i++)
+			{
+				for(int j =0; j <numOfPathes; j++)
+				{				
+					if (patches[i][j].getPerson().size() > 0) {
+						if (patches[i][j].getPerson().get(0) instanceof Cop) {
+							System.out.print("\t*");
+							continue;
+						} else if (((Agent)patches[i][j].getPerson().get(0)).isActive()) {
+							System.out.print("\tA");
+							continue;
+						}
+						int jail = patches[i][j].getPerson().get(0).returnJailTerm();
+						System.out.print("\t" + jail);
+					}
+					else
+					{
+						System.out.print("\t ");
+					}
+				}
+				System.out.println(" ");
+			}
+			System.out.println("--------------------------------------------------");	
 		}
 
 		private void graduallyChange() {

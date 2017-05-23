@@ -57,6 +57,11 @@ public class Person {
         this.currentPatch = currentPatch;
     }
 
+    public int returnJailTerm()
+    {
+        return this.jailTerm;
+    }
+
     public void setJailTerm(int jailTerm) {
         this.jailTerm = jailTerm;
     }
