@@ -47,8 +47,9 @@ public class Agent extends Person {
 
     public double returnArrestProbability(){
         int[] counts = getCurrentPatch().countInNeighborhood();
-        logger.info("cops: " + counts[0] + " active: " + counts[1]);
-        return 1 -  exp(- Configuration.ARREST_FACTOR * (counts[0] / (1+counts[1])));
+        double downward = counts[0] / ( 1 + counts[1]);
+//        logger.info("cops: " + counts[0] + " active: " + counts[1]);
+        return 1 -  exp(- Configuration.ARREST_FACTOR * (int)downward);
     }
 
     public void determinBehavior(){

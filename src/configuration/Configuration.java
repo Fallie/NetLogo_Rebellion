@@ -14,6 +14,4 @@ public class Configuration {
     // tops the risk of been arrested to make one rebel.
     public final static double REBEL_THRESHOLD = 0.1;
 
-
-
 }
