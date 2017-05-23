@@ -28,6 +28,10 @@ public class Output {
 
         boolean extension = Boolean.parseBoolean(args[9]);
 
+        boolean graduallyChangeGov = Boolean.parseBoolean(args[10]);
+
+        boolean sharplyChangGov = Boolean.parseBoolean(args[11]);
+
         double numOfAgents = numOfPathes*numOfPathes*initialAgentDensity;
 
         double numOfCops = numOfPathes*numOfPathes*initialCopDensity;
@@ -35,7 +39,8 @@ public class Output {
 
 
         World world = new World(numOfPathes, (int)numOfAgents, (int)numOfCops,
-        governmentLegitimacy, maxJailTerm, movement, vision, watchOne, ticks, extension);
+        governmentLegitimacy, maxJailTerm, movement, vision, watchOne, ticks, extension, graduallyChangeGov
+        , sharplyChangGov);
 
         world.setup();
 

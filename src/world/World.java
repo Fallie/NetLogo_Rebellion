@@ -54,6 +54,10 @@ public class World {
 
 		private boolean extension;
 
+		private boolean graduallyChangeGov;
+
+		private boolean sharplyChangGov;
+
 		//
 		public static Patch[][] patches;
 
@@ -87,7 +91,8 @@ public class World {
 		 */
 		public World(int numOfPathes, int numOfAgents, int numOfCops,
 					 double governmentLegitimacy, int maxJailTerm, boolean movement,
-					 int vision, boolean watchOne, int ticks, boolean extension) throws IOException {
+					 int vision, boolean watchOne, int ticks, boolean extension,
+					 boolean graduallyChangeGov, boolean sharplyChangGov) throws IOException {
 			this.numOfPathes = numOfPathes;
 			this.numOfAgents = numOfAgents;
 			this.numOfCops = numOfCops;
@@ -98,6 +103,8 @@ public class World {
 			this.watchOne = watchOne;
 			this.ticks = ticks;
 			this.extension = extension;
+			this.graduallyChangeGov = graduallyChangeGov;
+			this.sharplyChangGov = sharplyChangGov;
 		}
 
 		/**
@@ -151,12 +158,19 @@ public class World {
 
 				resetCount();
 
+				if(it > 50 && this.graduallyChangeGov){
+					graduallyChange();
+				}
+
+				if(it == 50 && this.sharplyChangGov){
+					sharplyChange();
+				}
+
 				for(Agent agent : agents){
 					if(agent.getJailTerm() == 0){
 						if(this.extension) agent.extensionBehavior();
 						else agent.determinBehavior();
 					}
-
 				}
 
 				for(Cop cop : cops){
@@ -185,9 +199,14 @@ public class World {
 
 				//put the data into the row
 				data.put(it+1, new Object[] {it, quietAgent, jailedAgent ,activeAgent});
+
+
+
+				//logger.info("goverment value: " + governmentLegitimacy);
 			}
 
 			logger.info("finished running the world");
+
 
 			//set up rows and cells and sort keys
 			List<Integer> keys = new ArrayList<>(data.keySet());
@@ -227,6 +246,14 @@ public class World {
 				e.printStackTrace();
 			}
 
+		}
+
+		private void graduallyChange() {
+			if(governmentLegitimacy> 0.2) governmentLegitimacy -= 0.01;
+		}
+
+		private void sharplyChange(){
+			governmentLegitimacy -= 0.3;
 		}
 
 		public Agent generateAgent(){

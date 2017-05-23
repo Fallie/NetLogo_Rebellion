@@ -21,6 +21,14 @@ public class Agent extends Person {
     private boolean isActive;
     private double susceptibility = 0;
 
+    //All the agent will share a same value of risk-aversion which
+    // describes how much they dislike the risk of being arrested
+    // because of rebelling.
+    private double riskAversion = 0;
+    //Describes how hard they think of their life, which may motivate
+    // them to rebel.
+    private double perceivedHardship = 0;
+
 
     /**
      * The constructor of agent class.
@@ -34,19 +42,18 @@ public class Agent extends Person {
     }
 
     public double returnGrievance(){
-        return Configuration.PERCEIVED_HARDSHIP * (1 - World.governmentLegitimacy);
-
+        return this.perceivedHardship * (1 - World.governmentLegitimacy);
     }
 
     public double returnArrestProbability(){
         int[] counts = getCurrentPatch().countInNeighborhood();
-        //logger.info("cops: " + counts[0] + " active: " + counts[1]);
+        logger.info("cops: " + counts[0] + " active: " + counts[1]);
         return 1 -  exp(- Configuration.ARREST_FACTOR * (counts[0] / (1+counts[1])));
     }
 
     public void determinBehavior(){
 //        logger.info("determing behavior");
-        if(returnGrievance() - Configuration.RISK_VERSION * returnArrestProbability()
+        if(returnGrievance() - this.riskAversion * returnArrestProbability()
             > Configuration.REBEL_THRESHOLD){
             this.isActive = true;
         }
@@ -57,7 +64,7 @@ public class Agent extends Person {
 
     public void extensionBehavior(){
         double grievance = returnGrievance();
-        if(grievance - Configuration.RISK_VERSION * returnArrestProbability()
+        if(grievance - this.riskAversion * returnArrestProbability()
             - susceptibility * (grievance - averageGrievance())> Configuration.REBEL_THRESHOLD){
             this.isActive = true;
         }
@@ -85,6 +92,8 @@ public class Agent extends Person {
 
     private void generateSusceptibility(){
         this.susceptibility = Math.random();
+        this.perceivedHardship = Math.random();
+        this.riskAversion = Math.random();
     }
 
 
