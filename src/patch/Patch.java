@@ -14,8 +14,6 @@ public class Patch {
 
     private ArrayList<Person> persons = new ArrayList<>();
 
-    private ArrayList<Patch> neighborhood = new ArrayList<>();
-
     private int x;
 
     private int y;
@@ -25,8 +23,7 @@ public class Patch {
         this.y = y;
     }
 
-
-    public void updateNeighborhood(){
+    public ArrayList<Patch> getNeighborhood() {
 
         ArrayList<Patch> neighbors = new ArrayList<>();
 
@@ -50,13 +47,7 @@ public class Patch {
             neighbors.add(World.patches[(i % World.numOfPathes + World.numOfPathes) % World.numOfPathes][y]);
         }
 
-        this.neighborhood = neighbors;
-
-        //logger.info("updating for patch x = " + x + " y = " + y);
-    }
-
-    public ArrayList<Patch> getNeighborhood() {
-        return neighborhood;
+        return neighbors;
     }
 
     public ArrayList<Person> getPerson() {
@@ -79,7 +70,7 @@ public class Patch {
 
         //if the all the person on this patch has jail term > 0, return true
         for(Person person : this.persons){
-            if(person.getJailTerm()==0) return false;
+            if(person instanceof Cop || person instanceof Agent && ((Agent)person).getJailTerm()==0) return false;
         }
         return true;
     }
@@ -87,7 +78,7 @@ public class Patch {
     public int[] countInNeighborhood(){
         int cops = 0;
         int activeAgents= 0;
-        for(Patch patch : neighborhood){
+        for(Patch patch : getNeighborhood()){
             if(patch.isCop()) cops ++;
             if(patch.isActiveAgent()) activeAgents ++;
         }

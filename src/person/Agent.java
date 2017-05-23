@@ -5,6 +5,7 @@ import patch.Patch;
 import world.World;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.logging.Logger;
 
 import static java.lang.Math.exp;
@@ -16,7 +17,7 @@ import static world.World.randInt;
  * Created by fallie on 15/5/17.
  */
 public class Agent extends Person {
-
+protected static Random r = new Random();
     Logger logger = Logger.getLogger("Agent");
     private boolean isActive;
     private double susceptibility = 0;
@@ -28,6 +29,7 @@ public class Agent extends Person {
     //Describes how hard they think of their life, which may motivate
     // them to rebel.
     private double perceivedHardship = 0;
+    private int jailTerm = 0;
 
 
     /**
@@ -48,12 +50,15 @@ public class Agent extends Person {
     public double returnArrestProbability(){
         int[] counts = getCurrentPatch().countInNeighborhood();
         logger.info("cops: " + counts[0] + " active: " + counts[1]);
-        return 1 -  exp(- Configuration.ARREST_FACTOR * (counts[0] / (1+counts[1])));
+        // return 1 -  exp(-1 * Configuration.ARREST_FACTOR * (counts[0] / (1+counts[1])) );
+        System.out.println("The arrest factor is that " +"["+ currentPatch.getX() + "," + currentPatch.getY() +" ]" + counts[0]  + "/" + (1+ counts[1]) );   
+
+        return 1 -  Math.exp(-Configuration.ARREST_FACTOR * Math.floor(counts[0] / (1+counts[1])) );
     }
 
     public void determinBehavior(){
 //        logger.info("determing behavior");
-        if(returnGrievance() - this.riskAversion * returnArrestProbability()
+        if(returnGrievance() - (this.riskAversion * returnArrestProbability())
             > Configuration.REBEL_THRESHOLD){
             this.isActive = true;
         }
@@ -61,6 +66,9 @@ public class Agent extends Person {
         {
             this.isActive = false;
         }
+
+        // System.out.println(returnGrievance() +"-"+ this.riskAversion + "*" + returnArrestProbability() + " = " + (returnGrievance() - this.riskAversion * returnArrestProbability()));   
+
 
         if(this.isActive) logger.info("***found an active agent here!!!!!");
 
@@ -99,10 +107,26 @@ public class Agent extends Person {
     }
 
     private void generateSusceptibility(){
+        this.riskAversion = r.nextDouble();
         this.susceptibility = Math.random();
         this.perceivedHardship = Math.random();
-        this.riskAversion = Math.random();
+        // this.riskAversion = Math.random();
     }
 
+    public int returnJailTerm()
+    {
+        return this.jailTerm;
+    }
+
+    public void setJailTerm(int jailTerm) {
+        this.jailTerm = jailTerm;
+    }
+
+    public void reduceJailTerm(){ this.jailTerm --; }
+
+    public int getJailTerm() {
+
+        return jailTerm;
+    }
 
 }

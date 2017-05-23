@@ -14,9 +14,8 @@ import static world.World.randInt;
 public class Person {
 
 
-    private Patch currentPatch;
+    public Patch currentPatch;
 
-    private int jailTerm = 0;
 
     /**
      * The constructor of person class.
@@ -57,19 +56,4 @@ public class Person {
         this.currentPatch = currentPatch;
     }
 
-    public int returnJailTerm()
-    {
-        return this.jailTerm;
-    }
-
-    public void setJailTerm(int jailTerm) {
-        this.jailTerm = jailTerm;
-    }
-
-    public void reduceJailTerm(){ this.jailTerm --; }
-
-    public int getJailTerm() {
-
-        return jailTerm;
-    }
 }

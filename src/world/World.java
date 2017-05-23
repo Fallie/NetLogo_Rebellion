@@ -135,11 +135,11 @@ public class World {
 			}
 			logger.info("finished setting up the cops");
 			logger.info("begin updating neighbors");
-			for(int k = 0; k < patches.length; k ++){
-				for(int j = 0; j < patches[k].length; j ++){
-					patches[k][j].updateNeighborhood();
-				}
-			}
+			// for(int k = 0; k < patches.length; k ++){
+			// 	for(int j = 0; j < patches[k].length; j ++){
+			// 		patches[k][j].updateNeighborhood();
+			// 	}
+			// }
 			logger.info("finished updating neighbors");
 		}
 
@@ -155,10 +155,19 @@ public class World {
 			//start running the world
 			int it= 0;
 			for(int i = ticks; i > 0; i--){
+				// print out the pic
 				printPatch();
+
+				// M rule
+				logger.info("agents are moving randomly");
+				randMove(agents);
+				logger.info("cops are moving randomly");
+				randMove(cops);
+
 				
 				resetCount();
 
+				// special modes 
 				if(it > 50 && this.graduallyChangeGov){
 					graduallyChange();
 				}
@@ -167,6 +176,7 @@ public class World {
 					sharplyChange();
 				}
 
+				// A rule
 				for(Agent agent : agents){
 					if(agent.getJailTerm() == 0){
 						if(this.extension) agent.extensionBehavior();
@@ -174,6 +184,7 @@ public class World {
 					}
 				}
 
+				// C rule
 				for(Cop cop : cops){
 					cop.enforce();
 				}
@@ -182,26 +193,12 @@ public class World {
 					if(agent.getJailTerm() > 0) agent.reduceJailTerm();
 				}
 
+				// for information
 				countAgents();
-
-				for(int k = 0; k < patches.length; k ++){
-					for(int j = 0; j < patches[k].length; j ++){
-						patches[k][j].updateNeighborhood();
-					}
-				}
-
-				logger.info("agents are moving randomly");
-				randMove(agents);
-				logger.info("cops are moving randomly");
-				randMove(cops);
-
 				it ++;
 				logger.info("world running iteration it :" + it);
-
 				//put the data into the row
 				data.put(it+1, new Object[] {it, quietAgent, jailedAgent ,activeAgent});
-
-
 
 				//logger.info("goverment value: " + governmentLegitimacy);
 			}
@@ -263,7 +260,7 @@ public class World {
 							System.out.print("\tA");
 							continue;
 						}
-						int jail = patches[i][j].getPerson().get(0).returnJailTerm();
+						int jail = ((Agent)patches[i][j].getPerson().get(0)).returnJailTerm();
 						System.out.print("\t" + jail);
 					}
 					else
@@ -366,6 +363,9 @@ public class World {
 		}
 
 		private void countAgents(){
+						int activeAgent = 0;
+			int jailedAgent = 0;
+			int quietAgent = 0;
 			for(Agent agent : agents){
 				if(agent.isActive()) activeAgent ++;
 				else if(agent.getJailTerm() > 0) jailedAgent ++;
