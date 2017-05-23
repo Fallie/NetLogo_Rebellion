@@ -29,7 +29,7 @@ public class Person {
     //move a person to a movable patch
     public void move(){
 
-        ArrayList<Patch> tempNeighborhood = new ArrayList<Patch>();
+        ArrayList<Patch> tempNeighborhood = new ArrayList<>();
         if(World.movement || this instanceof Cop){
 
             for(Patch patch : currentPatch.getNeighborhood()){

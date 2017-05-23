@@ -12,9 +12,9 @@ import world.World;
 public class Patch {
     Logger logger = Logger.getLogger("Patch");
 
-    private ArrayList<Person> persons = new ArrayList<Person>();
+    private ArrayList<Person> persons = new ArrayList<>();
 
-    private ArrayList<Patch> neighborhood = new ArrayList<Patch>();
+    private ArrayList<Patch> neighborhood = new ArrayList<>();
 
     private int x;
 
@@ -28,7 +28,7 @@ public class Patch {
 
     public void updateNeighborhood(){
 
-        ArrayList<Patch> neighbors = new ArrayList<Patch>();
+        ArrayList<Patch> neighbors = new ArrayList<>();
 
         //x-axis
         //right
@@ -51,14 +51,6 @@ public class Patch {
         }
 
         this.neighborhood = neighbors;
-        //logger.info("updated neighbor for x = " + x + " y = " + y);
-
-//        if(x == 0 && y ==0){
-//            for(Patch patch : neighborhood){
-//                logger.info("neighbor for (0 , 0 ) is x = " + patch.getX() + " y = " + patch.getY());
-//            }
-//
-//        }
 
         //logger.info("updating for patch x = " + x + " y = " + y);
     }

@@ -48,10 +48,12 @@ public class Agent extends Person {
             this.isActive = true;
         }
 
+        if(this.isActive) logger.info("***found an active agent here!!!!!");
+
     }
 
     public boolean isActive() {
-        return isActive;
+        return this.isActive;
     }
 
     public void arrest(){

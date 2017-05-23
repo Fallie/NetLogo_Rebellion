@@ -21,7 +21,7 @@ public class Cop extends Person {
     public void enforce(){
         logger.info("cop is enforcing");
         int[] counts = getCurrentPatch().countInNeighborhood();
-        ArrayList<Patch> tempNeighborhood = new ArrayList<Patch>();
+        ArrayList<Patch> tempNeighborhood = new ArrayList<>();
         if(counts[1]!=0){
             //select a random suspect and send it to jail
             for(Patch patch : getCurrentPatch().getNeighborhood()){

@@ -5,9 +5,15 @@ import person.Agent;
 import person.Cop;
 import person.Person;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Random;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+
+import java.io.*;
+import java.util.*;
+import java.nio.file.Paths;
 import java.util.logging.Logger;
 
 /**
@@ -56,6 +62,15 @@ public class World {
 
 		Logger logger = Logger.getLogger("World");
 
+		public static int quietAgent = 0;
+
+		public static int jailedAgent = 0;
+
+		public static int activeAgent = 0;
+
+
+
+
 		/**
 		 * The constructor of world class.
 		 * @param numOfPathes
@@ -70,7 +85,7 @@ public class World {
 		 */
 		public World(int numOfPathes, int numOfAgents, int numOfCops,
 					 double governmentLegitimacy, int maxJailTerm, boolean movement,
-					 int vision, boolean watchOne, int ticks) {
+					 int vision, boolean watchOne, int ticks) throws IOException {
 			this.numOfPathes = numOfPathes;
 			this.numOfAgents = numOfAgents;
 			this.numOfCops = numOfCops;
@@ -118,19 +133,34 @@ public class World {
 			logger.info("finished updating neighbors");
 		}
 
-		public void go(int ticks){
+		public void go(int ticks) throws IOException {
 			logger.info("begin run the world");
+
+			//create the excel file
+			HSSFWorkbook workbook = new HSSFWorkbook();
+			HSSFSheet sheet = workbook.createSheet("Rebellion");
+			Map<Integer, Object[]> data = new HashMap<>();
+			data.put(1, new Object[] {"Tick No.", "Quiet Agents", "Jailed Agents","Active Agents"});
+
+			//start running the world
 			int it= 0;
 			for(int i = ticks; i > 0; i--){
 
+				resetCount();
+
 				for(Agent agent : agents){
 					if(agent.getJailTerm() == 0) agent.determinBehavior();
-					else agent.reduceJailTerm();
 				}
 
 				for(Cop cop : cops){
 					cop.enforce();
 				}
+
+				for(Agent agent : agents){
+					if(agent.getJailTerm() > 0) agent.reduceJailTerm();
+				}
+
+				countAgents();
 
 				for(int k = 0; k < patches.length; k ++){
 					for(int j = 0; j < patches[k].length; j ++){
@@ -145,9 +175,50 @@ public class World {
 
 				it ++;
 				logger.info("world running iteration it :" + it);
+
+				//put the data into the row
+				data.put(it+1, new Object[] {it, quietAgent, jailedAgent ,activeAgent});
 			}
 
 			logger.info("finished running the world");
+
+			//set up rows and cells and sort keys
+			List<Integer> keys = new ArrayList<>(data.keySet());
+			Collections.sort(keys);
+			int rownum = 0;
+			for (Integer key : keys) {
+				Row row = sheet.createRow(rownum++);
+				Object [] objArr = data.get(key);
+				int cellnum = 0;
+				for (Object obj : objArr) {
+					Cell cell = row.createCell(cellnum++);
+					if(obj instanceof Date)
+						cell.setCellValue((Date)obj);
+					else if(obj instanceof Boolean)
+						cell.setCellValue((Boolean)obj);
+					else if(obj instanceof String)
+						cell.setCellValue((String)obj);
+					else if(obj instanceof Double)
+						cell.setCellValue((Double)obj);
+					else if(obj instanceof Integer)
+						cell.setCellValue((int)obj);
+				}
+			}
+
+			//write data to the excel file
+			try {
+				FileOutputStream out =
+					new FileOutputStream(new File(Paths.get(".").toAbsolutePath().normalize().toString(),
+						"Rebellion"), false);
+				workbook.write(out);
+				out.close();
+				System.out.println("Excel written successfully..");
+
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 
 		}
 
@@ -208,7 +279,7 @@ public class World {
 
 		private void randMove(Person[] array){
 			logger.info("randMoving starts");
-			ArrayList<Integer> remaining = new ArrayList<Integer>();
+			ArrayList<Integer> remaining = new ArrayList<>();
 			for (int i = 0; i < array.length; i++) {
 				remaining.add(i);
 			}
@@ -231,6 +302,21 @@ public class World {
 			}
 			logger.info("randmove finished after " + step + "iterations.");
 		}
+
+		private void countAgents(){
+			for(Agent agent : agents){
+				if(agent.isActive()) activeAgent ++;
+				else if(agent.getJailTerm() > 0) jailedAgent ++;
+				else quietAgent ++;
+			}
+		}
+
+		private void resetCount(){
+			activeAgent = 0;
+			jailedAgent = 0;
+			quietAgent = 0;
+		}
+
 
 
 
