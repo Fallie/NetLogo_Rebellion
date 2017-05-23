@@ -1,7 +1,6 @@
 import world.World;
 
 import java.io.IOException;
-import java.io.FileWriter;
 
 /**
  * Created by fallie on 15/5/17.
@@ -27,6 +26,8 @@ public class Output {
 
         int ticks = Integer.parseInt(args[8]);
 
+        boolean extension = Boolean.parseBoolean(args[9]);
+
         double numOfAgents = numOfPathes*numOfPathes*initialAgentDensity;
 
         double numOfCops = numOfPathes*numOfPathes*initialCopDensity;
@@ -34,7 +35,7 @@ public class Output {
 
 
         World world = new World(numOfPathes, (int)numOfAgents, (int)numOfCops,
-        governmentLegitimacy, maxJailTerm, movement, vision, watchOne, ticks);
+        governmentLegitimacy, maxJailTerm, movement, vision, watchOne, ticks, extension);
 
         world.setup();
 

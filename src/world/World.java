@@ -52,6 +52,8 @@ public class World {
 		//
 		private int ticks;
 
+		private boolean extension;
+
 		//
 		public static Patch[][] patches;
 
@@ -85,7 +87,7 @@ public class World {
 		 */
 		public World(int numOfPathes, int numOfAgents, int numOfCops,
 					 double governmentLegitimacy, int maxJailTerm, boolean movement,
-					 int vision, boolean watchOne, int ticks) throws IOException {
+					 int vision, boolean watchOne, int ticks, boolean extension) throws IOException {
 			this.numOfPathes = numOfPathes;
 			this.numOfAgents = numOfAgents;
 			this.numOfCops = numOfCops;
@@ -95,6 +97,7 @@ public class World {
 			this.vision = vision;
 			this.watchOne = watchOne;
 			this.ticks = ticks;
+			this.extension = extension;
 		}
 
 		/**
@@ -149,7 +152,11 @@ public class World {
 				resetCount();
 
 				for(Agent agent : agents){
-					if(agent.getJailTerm() == 0) agent.determinBehavior();
+					if(agent.getJailTerm() == 0){
+						if(this.extension) agent.extensionBehavior();
+						else agent.determinBehavior();
+					}
+
 				}
 
 				for(Cop cop : cops){
@@ -297,7 +304,7 @@ public class World {
 					else cops[index].move();
 					remaining.set(index,-1);
 					step++;
-					logger.info("this is the number " + step + "iteration.");
+					//logger.info("this is the number " + step + "iteration.");
 				}
 			}
 			logger.info("randmove finished after " + step + "iterations.");

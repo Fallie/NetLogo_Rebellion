@@ -4,6 +4,7 @@ import configuration.Configuration;
 import patch.Patch;
 import world.World;
 
+import java.util.ArrayList;
 import java.util.logging.Logger;
 
 import static java.lang.Math.exp;
@@ -18,6 +19,7 @@ public class Agent extends Person {
 
     Logger logger = Logger.getLogger("Agent");
     private boolean isActive;
+    private double susceptibility = 0;
 
 
     /**
@@ -28,6 +30,7 @@ public class Agent extends Person {
     public Agent(Patch currentPatch, boolean isActive) {
         super(currentPatch);
         this.isActive = isActive;
+        this.generateSusceptibility();
     }
 
     public double returnGrievance(){
@@ -42,7 +45,7 @@ public class Agent extends Person {
     }
 
     public void determinBehavior(){
-        logger.info("determing behavior");
+//        logger.info("determing behavior");
         if(returnGrievance() - Configuration.RISK_VERSION * returnArrestProbability()
             > Configuration.REBEL_THRESHOLD){
             this.isActive = true;
@@ -52,6 +55,25 @@ public class Agent extends Person {
 
     }
 
+    public void extensionBehavior(){
+        double grievance = returnGrievance();
+        if(grievance - Configuration.RISK_VERSION * returnArrestProbability()
+            - susceptibility * (grievance - averageGrievance())> Configuration.REBEL_THRESHOLD){
+            this.isActive = true;
+        }
+        if(this.isActive) logger.info("***found an active agent with extension!!!!!");
+    }
+
+    private double averageGrievance(){
+        double sum = 0;
+        ArrayList<Patch> neiborhoods =  this.getCurrentPatch().getNeighborhood();
+        for(Patch patch : neiborhoods){
+            if(!patch.isCop() && !patch.isActiveAgent() && patch.getAgent()!= null)
+                sum += patch.getAgent().returnGrievance();
+        }
+        return sum/neiborhoods.size();
+    }
+
     public boolean isActive() {
         return this.isActive;
     }
@@ -59,6 +81,10 @@ public class Agent extends Person {
     public void arrest(){
         this.isActive = false;
         this.setJailTerm(randInt(0, maxJailTerm));
+    }
+
+    private void generateSusceptibility(){
+        this.susceptibility = Math.random();
     }
 
 

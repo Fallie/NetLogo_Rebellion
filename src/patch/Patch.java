@@ -94,7 +94,7 @@ public class Patch {
         return new int[]{cops,activeAgents};
     }
 
-    private boolean isCop(){
+    public boolean isCop(){
 
         for(Person person : this.persons){
             if(person instanceof Cop) return true;
@@ -108,6 +108,13 @@ public class Patch {
             if(person instanceof Agent && ((Agent) person).isActive()) return true;
         }
         return false;
+    }
+
+    public Agent getAgent(){
+        for(Person person : persons){
+            if(person instanceof Agent && !((Agent) person).isActive()) return (Agent)person;
+        }
+        return null;
     }
 
     public Agent getSuspect(){
