@@ -7,7 +7,6 @@ import world.World;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
-import static java.lang.Math.exp;
 import static world.World.maxJailTerm;
 import static world.World.randInt;
 
@@ -49,7 +48,8 @@ public class Agent extends Person {
         int[] counts = getCurrentPatch().countInNeighborhood();
         double downward = counts[0] / ( 1 + counts[1]);
 //        logger.info("cops: " + counts[0] + " active: " + counts[1]);
-        return 1 -  exp(- Configuration.ARREST_FACTOR * (int)downward);
+        logger.info("downward: " + downward);
+        return 1 -  Math.exp(- Configuration.ARREST_FACTOR * (int)downward);
     }
 
     public void determinBehavior(){

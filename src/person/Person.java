@@ -5,6 +5,7 @@ import world.World;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.logging.Logger;
 
 import static world.World.randInt;
 
@@ -12,7 +13,7 @@ import static world.World.randInt;
  * Created by fallie on 15/5/17.
  */
 public class Person {
-
+    Logger logger = Logger.getLogger("Person");
 
     private Patch currentPatch;
 
@@ -42,8 +43,11 @@ public class Person {
 
             //move the current person onto a random movable patch
             World.patches[currentPatch.getX()][currentPatch.getY()].removePerson(this);
+//            logger.info("move from x=" + currentPatch.getX() + " y=" + currentPatch.getY()
+//                +" to x=" + selectedX + " y=" + selectedY);
             World.patches[selectedX][selectedY].setPerson(this);
             this.setCurrentPatch(World.patches[selectedX][selectedY]);
+
 
         }
     }
