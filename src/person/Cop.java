@@ -35,6 +35,11 @@ public class Cop extends Person {
             //send the suspect to jail on that patch
             World.patches[selectedX][selectedY].getSuspect().arrest();
 
+            //move this cop to that patch
+            World.patches[this.getCurrentPatch().getX()][this.getCurrentPatch().getY()].removePerson(this);
+            World.patches[selectedX][selectedY].setPerson(this);
+            this.setCurrentPatch(World.patches[selectedX][selectedY]);
+
         }
     }
 }

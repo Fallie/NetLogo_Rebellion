@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.logging.Logger;
 
-import static java.lang.Math.exp;
 import static world.World.maxJailTerm;
 import static world.World.randInt;
 

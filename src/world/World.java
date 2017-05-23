@@ -351,8 +351,9 @@ public class World {
 				int index = randInt(0,remaining.size()-1);
 				if(remaining.get(index)>=0){
 					//move agents and cops here
-					if(isAgentArray)
-						agents[index].move();
+					if(isAgentArray){
+						if(agents[index].getJailTerm() == 0) agents[index].move();
+					}
 					else cops[index].move();
 					remaining.set(index,-1);
 					step++;
