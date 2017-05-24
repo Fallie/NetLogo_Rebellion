@@ -3,7 +3,8 @@ import world.World;
 import java.io.IOException;
 
 /**
- * Created by fallie on 15/5/17.
+ * The entrance of the program (main method) which
+ * runs the world till the tick is 0.
  */
 public class Output {
     public static void main(String[] args) throws IOException{
@@ -22,28 +23,29 @@ public class Output {
 
         int vision = Integer.parseInt(args[6]);
 
-        boolean watchOne = Boolean.parseBoolean(args[7]);
+        int ticks = Integer.parseInt(args[7]);
 
-        int ticks = Integer.parseInt(args[8]);
+        boolean extension = Boolean.parseBoolean(args[8]);
 
-        boolean extension = Boolean.parseBoolean(args[9]);
+        boolean graduallyChangeGov = Boolean.parseBoolean(args[9]);
 
-        boolean graduallyChangeGov = Boolean.parseBoolean(args[10]);
-
-        boolean sharplyChangGov = Boolean.parseBoolean(args[11]);
+        boolean sharplyChangGov = Boolean.parseBoolean(args[10]);
 
         double numOfAgents = numOfPathes*numOfPathes*initialAgentDensity;
 
         double numOfCops = numOfPathes*numOfPathes*initialCopDensity;
 
 
-
+        //Instantiate a world with the input arguments.
         World world = new World(numOfPathes, (int)numOfAgents, (int)numOfCops,
-        governmentLegitimacy, maxJailTerm, movement, vision, watchOne, ticks, extension, graduallyChangeGov
+        governmentLegitimacy, maxJailTerm, movement, vision, ticks,
+            extension, graduallyChangeGov
         , sharplyChangGov);
 
+        //Setup the world.
         world.setup();
 
+        //Run the world.
         world.go(ticks);
 
     }
