@@ -4,19 +4,15 @@ import patch.Patch;
 import world.World;
 
 import java.util.ArrayList;
-import java.util.Random;
-import java.util.logging.Logger;
-
 import static world.World.randInt;
 
 /**
- * Created by fallie on 15/5/17.
+ * The class represents a turtle in netlogo.
  */
 public class Person {
-    Logger logger = Logger.getLogger("Person");
 
+    //the current patch of the pserson
     public Patch currentPatch;
-
 
     /**
      * The constructor of person class.
@@ -31,9 +27,9 @@ public class Person {
 
         ArrayList<Patch> tempNeighborhood = new ArrayList<>();
         if(World.movement || this instanceof Cop){
-
+            //iterate through the neighbors
             for(Patch patch : currentPatch.getNeighborhood()){
-                if(patch.isMoveable()) tempNeighborhood.add(patch);
+                if(patch.isMovable()) tempNeighborhood.add(patch);
             }
 
             int selected = randInt(0, tempNeighborhood.size()-1);
@@ -41,16 +37,14 @@ public class Person {
             int selectedY = tempNeighborhood.get(selected).getY();
 
             //move the current person onto a random movable patch
-            World.patches[currentPatch.getX()][currentPatch.getY()].removePerson(this);
-//            logger.info("move from x=" + currentPatch.getX() + " y=" + currentPatch.getY()
-//                +" to x=" + selectedX + " y=" + selectedY);
+            World.patches[currentPatch.getX()][currentPatch.getY()].
+                removePerson(this);
             World.patches[selectedX][selectedY].setPerson(this);
             this.setCurrentPatch(World.patches[selectedX][selectedY]);
 
 
         }
     }
-
 
     public Patch getCurrentPatch() {
         return currentPatch;

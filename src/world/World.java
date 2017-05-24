@@ -25,57 +25,58 @@ import java.util.logging.Logger;
 public class World {
 
 
-		//
+		//The number of patches in a row.
 		public static int numOfPathes;
 
-		//
+		//The number of cops.
 		private int numOfCops;
 
-		//
+		//The number of agents.
 		private int numOfAgents;
 
-		//
+		//The governmentLegitimacy.
 		public static double governmentLegitimacy;
 
-		//
+		//The maxJailTerm.
 		public static int maxJailTerm;
 
-		//
+		//Whether the agents can move or not.
 		public static boolean movement;
 
-		//
+		//The distance of the vision.
 		public static int vision;
 
-		//
-		private boolean watchOne;
-
-		//
+		//The number of ticks.
 		private int ticks;
 
+		//Whether the extension is turned on.
 		private boolean extension;
 
+		//Whether the graduallyChangeGov is turned on.
 		private boolean graduallyChangeGov;
 
+		//Whether the sharplyChangGov is turned on.
 		private boolean sharplyChangGov;
 
-		//
+		//The patches in the world.
 		public static Patch[][] patches;
 
-		//
+		//The agents in the world.
 		public static Agent[] agents;
 
+		//The cops in the world.
 		public static Cop[] cops;
 
-		Logger logger = Logger.getLogger("World");
-
+		//The number of quietAgents.
 		public static int quietAgent = 0;
 
+		//The number of jailedAgents.
 		public static int jailedAgent = 0;
 
+		//The number of activeAgents.
 		public static int activeAgent = 0;
 
-
-
+		Logger logger = Logger.getLogger("World");
 
 		/**
 		 * The constructor of world class.
@@ -86,13 +87,13 @@ public class World {
 		 * @param maxJailTerm
 		 * @param movement
 		 * @param vision
-		 * @param watchOne
 		 * @param ticks
 		 */
 		public World(int numOfPathes, int numOfAgents, int numOfCops,
-					 double governmentLegitimacy, int maxJailTerm, boolean movement,
-					 int vision, boolean watchOne, int ticks, boolean extension,
-					 boolean graduallyChangeGov, boolean sharplyChangGov) throws IOException {
+					 double governmentLegitimacy, int maxJailTerm,
+					 boolean movement, int vision, int ticks, boolean extension,
+					 boolean graduallyChangeGov, boolean sharplyChangGov)
+					 throws IOException {
 			this.numOfPathes = numOfPathes;
 			this.numOfAgents = numOfAgents;
 			this.numOfCops = numOfCops;
@@ -100,7 +101,6 @@ public class World {
 			this.maxJailTerm = maxJailTerm;
 			this.movement = movement;
 			this.vision = vision;
-			this.watchOne = watchOne;
 			this.ticks = ticks;
 			this.extension = extension;
 			this.graduallyChangeGov = graduallyChangeGov;
@@ -112,8 +112,8 @@ public class World {
 		 */
 		public void setup(){
 
-			logger.info("begin setting up the world");
 			logger.info("begin setting up the patches");
+
 			//Initialize the patches in the world.
 			patches = new Patch[numOfPathes][numOfPathes];
 			for(int i = 0; i < patches.length; i ++){
@@ -122,90 +122,99 @@ public class World {
 					//logger.info("generated x = " + i + "y = " + j);
 				}
 			}
+
 			logger.info("begin setting up the agents");
+
 			//Generate agents and cops.
 			agents = new Agent[numOfAgents];
 			for(int k = 0; k < numOfAgents; k ++){
 				agents[k] = generateAgent();
 			}
+
+			logger.info("finished setting up the agents");
+
 			logger.info("begin setting up the cops");
 			cops = new Cop[numOfCops];
 			for(int k = 0; k < numOfCops; k ++){
 				cops[k] = generateCop();
 			}
+
 			logger.info("finished setting up the cops");
-			logger.info("begin updating neighbors");
-			// for(int k = 0; k < patches.length; k ++){
-			// 	for(int j = 0; j < patches[k].length; j ++){
-			// 		patches[k][j].updateNeighborhood();
-			// 	}
-			// }
-			logger.info("finished updating neighbors");
+
 		}
 
+		/**
+		 * Run the world.
+		 * @param ticks
+		 * @throws IOException
+		 */
 		public void go(int ticks) throws IOException {
+
 			logger.info("begin run the world");
 
 			//create the excel file
 			HSSFWorkbook workbook = new HSSFWorkbook();
 			HSSFSheet sheet = workbook.createSheet("Rebellion");
 			Map<Integer, Object[]> data = new HashMap<>();
-			data.put(1, new Object[] {"Tick No.", "Quiet Agents", "Jailed Agents","Active Agents"});
+			data.put(1, new Object[] {"Tick No.", "Quiet Agents",
+				   					  "Jailed Agents","Active Agents"});
 
 			//start running the world
 			int it= 0;
 			for(int i = ticks; i > 0; i--){
 				// print out the pic
-				printPatch();
+				//printPatch();
 
 				// M rule
 				logger.info("agents are moving randomly");
 				randMove(agents);
+
 				logger.info("cops are moving randomly");
 				randMove(cops);
 
-				
 				resetCount();
 
-				// special modes 
+				// special modes, reduce gov gradually
 				if(it > 50 && this.graduallyChangeGov){
 					graduallyChange();
 				}
 
+				// special modes, reduce gov sharply
 				if(it == 50 && this.sharplyChangGov){
 					sharplyChange();
 				}
 
+				//shuffle the agents and cops
+				Collections.shuffle(Arrays.asList(agents));
+				Collections.shuffle(Arrays.asList(cops));
+
 				// A rule
-
-
 				for(Agent agent : agents){
 					if(agent.getJailTerm() == 0){
 						if(this.extension) agent.extensionBehavior();
 						else agent.determinBehavior();
 					}
 				}
-				countAgents();
+
 				// C rule
 				for(Cop cop : cops){
 					cop.enforce();
 				}
-
+				//Reduce the jail term of jailed agents.
 				for(Agent agent : agents){
 					if(agent.getJailTerm() > 0) agent.reduceJailTerm();
 				}
 
-				// for information
+				//calculate the agents for the output excel.
+				countAgents();
 				
 				it ++;
-				logger.info("world running iteration it :" + it);
+				//logger.info("world running iteration it :" + it);
+
 				//put the data into the row
-				data.put(it+1, new Object[] {it, quietAgent, jailedAgent ,activeAgent});
+				data.put(it+1, new Object[] {it, quietAgent, jailedAgent
+											,activeAgent});
 
-
-				Collections.shuffle(Arrays.asList(agents));
-				Collections.shuffle(Arrays.asList(cops));
-				//logger.info("goverment value: " + governmentLegitimacy);
 			}
 
 			logger.info("finished running the world");
@@ -237,7 +246,8 @@ public class World {
 			//write data to the excel file
 			try {
 				FileOutputStream out =
-					new FileOutputStream(new File(Paths.get(".").toAbsolutePath().normalize().toString(),
+					new FileOutputStream(new File(Paths.get(".")
+						.toAbsolutePath().normalize().toString(),
 						"Rebellion"), false);
 				workbook.write(out);
 				out.close();
@@ -251,8 +261,10 @@ public class World {
 
 		}
 
-		public void printPatch()
-		{
+		/**
+		 * Print the patch map with people on it.
+		 */
+		public void printPatch() {
 			for(int i =0; i <numOfPathes; i++)
 			{
 				for(int j =0; j <numOfPathes; j++)
@@ -265,7 +277,8 @@ public class World {
 							System.out.print("\tA");
 							continue;
 						}
-						int jail = ((Agent)patches[i][j].getPerson().get(0)).returnJailTerm();
+						int jail = ((Agent)patches[i][j].getPerson().get(0))
+									.returnJailTerm();
 						System.out.print("\t" + jail);
 					}
 					else
@@ -275,24 +288,35 @@ public class World {
 				}
 				System.out.println(" ");
 			}
-			System.out.println("--------------------------------------------------");	
+			System.out.println("------------------------------------");
 		}
 
+		/**
+		 * Reduce the governmentLegitimacy by 0.01 each tick.
+		 */
 		private void graduallyChange() {
 			if(governmentLegitimacy> 0.2) governmentLegitimacy -= 0.01;
 		}
 
+		/**
+		 * Reduce the governmentLegitimacy by 0.3 in one tick.
+		 */
 		private void sharplyChange(){
 			governmentLegitimacy -= 0.3;
 		}
 
+		/**
+		 * Generate an agent and assign it to a random movable patch.
+		 * @return Agent
+		 */
 		public Agent generateAgent(){
 
 			logger.info("generateAgent method");
 
 			Patch currentPatch = randPatch();
 
-			logger.info("random patch: x = " + currentPatch.getX()+" y = " + currentPatch.getY());
+			logger.info("random patch: x = " + currentPatch.getX()
+						+ " y = " + currentPatch.getY());
 
 
 			Agent agent= new Agent(currentPatch, false);
@@ -302,6 +326,10 @@ public class World {
 			return agent;
 		}
 
+		/**
+		 * Generate a cop and assign it to a random movable patch.
+		 * @return Cop
+		 */
 		public Cop generateCop(){
 
 			Patch currentPatch = randPatch();
@@ -313,6 +341,10 @@ public class World {
 			return cop;
 		}
 
+		/**
+		 * Find a random patch with no person on it..
+		 * @return Patch
+		 */
 		public Patch randPatch(){
 
 			logger.info("randPatch method");
@@ -320,7 +352,8 @@ public class World {
 			logger.info("start randomly finding patch");
 
 			while(true) {
-				patch = patches[randInt(0,numOfPathes-1)][randInt(0,numOfPathes-1)];
+				patch = patches[randInt(0,numOfPathes-1)]
+						[randInt(0,numOfPathes-1)];
 				if(patch.getPerson().size() == 0) break;
 			}
 			logger.info("finished randomly finding patch");
@@ -328,7 +361,12 @@ public class World {
 			return patch;
 		}
 
-
+		/**
+		 * Return a random int between min and max.
+		 * @param min
+		 * @param max
+		 * @return int
+		 */
 		public static int randInt(int min, int max) {
 
 			// Usually this can be a field rather than a method variable
@@ -341,6 +379,10 @@ public class World {
 			return randomNum;
 		}
 
+		/**
+		 * Move an array of person randomly to random patch.
+		 * @param array
+		 */
 		private void randMove(Person[] array){
 			logger.info("randMoving starts");
 			ArrayList<Integer> remaining = new ArrayList<>();
@@ -357,17 +399,20 @@ public class World {
 				if(remaining.get(index)>=0){
 					//move agents and cops here
 					if(isAgentArray){
-						if(agents[index].getJailTerm() == 0) agents[index].move();
+						if(agents[index].getJailTerm() == 0)
+							agents[index].move();
 					}
 					else cops[index].move();
 					remaining.set(index,-1);
 					step++;
-					//logger.info("this is the number " + step + "iteration.");
 				}
 			}
 			logger.info("randmove finished after " + step + "iterations.");
 		}
 
+		/**
+		 * Count the agents for the output excel.
+		 */
 		private void countAgents(){
 			for(Agent agent : agents){
 				if(agent.isActive()) activeAgent ++;
@@ -376,6 +421,9 @@ public class World {
 			}
 		}
 
+		/**
+		 * Reset the count of agents.
+		 */
 		private void resetCount(){
 			activeAgent = 0;
 			jailedAgent = 0;

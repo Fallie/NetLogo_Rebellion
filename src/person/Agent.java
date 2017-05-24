@@ -13,21 +13,26 @@ import static world.World.randInt;
 
 
 /**
- * Created by fallie on 15/5/17.
+ * The class represents for the agent which can rebel at some point.
  */
 public class Agent extends Person {
-protected static Random r = new Random();
-    Logger logger = Logger.getLogger("Agent");
+
+    //If this agent is active.
     private boolean isActive;
+
+    //The susceptibility of this agent, for the extension use only.
     private double susceptibility = 0;
 
     //All the agent will share a same value of risk-aversion which
     // describes how much they dislike the risk of being arrested
     // because of rebelling.
     private double riskAversion = 0;
+
     //Describes how hard they think of their life, which may motivate
     // them to rebel.
     private double perceivedHardship = 0;
+
+    //The current jail term of this agent.
     private int jailTerm = 0;
 
 
@@ -39,58 +44,66 @@ protected static Random r = new Random();
     public Agent(Patch currentPatch, boolean isActive) {
         super(currentPatch);
         this.isActive = isActive;
-        this.generateSusceptibility();
+        this.generateAttribute();
     }
 
+    /**
+     * Calculate the grievance.
+     * @return double
+     */
     public double returnGrievance(){
         return this.perceivedHardship * (1 - World.governmentLegitimacy);
     }
 
+    /**
+     * Calculate the arrestProbability.
+     * @return double
+     */
     public double returnArrestProbability(){
-        int[] counts = getCurrentPatch().countInNeighborhood();
-        // logger.info("cops: " + counts[0] + " active: " + counts[1]);
-        // return 1 -  exp(-1 * Configuration.ARREST_FACTOR * (counts[0] / (1+counts[1])) );
-        // System.out.println("The arrest factor is that " +"["+ currentPatch.getX() + "," + currentPatch.getY() +" ]" + counts[0]  + "/" + (1+ counts[1]) +" "+ (Math.exp(-Configuration.ARREST_FACTOR * Math.floor(counts[0] / (1+counts[1])) )));   
 
-        return 1 -  Math.exp(-Configuration.ARREST_FACTOR * (counts[0] / (1+counts[1])) );
+        int[] counts = getCurrentPatch().countInNeighborhood();
+        return 1 -  Math.exp(-Configuration.ARREST_FACTOR *
+                (counts[0] / (1+counts[1])) );
     }
 
+    /**
+     * Check if this agent is going to rebel.
+     */
     public void determinBehavior(){
-//        logger.info("determing behavior");
+
         if(returnGrievance() - (this.riskAversion * returnArrestProbability())
             > Configuration.REBEL_THRESHOLD){
             this.isActive = true;
         }
-        else
-        {
-            this.isActive = false;
-        }
-
-        // System.out.println(returnGrievance() +"-"+ this.riskAversion + "*" + returnArrestProbability() + " = " + (returnGrievance() - this.riskAversion * returnArrestProbability()));   
-
-
-        // if(this.isActive) logger.info("***found an active agent here!!!!!");
+        else this.isActive = false;
 
     }
 
+    /**
+     * Check if this agent is going to rebel, for extension use only.
+     */
     public void extensionBehavior(){
         double grievance = returnGrievance();
         if(grievance - this.riskAversion * returnArrestProbability()
-            - susceptibility * (grievance - averageGrievance())> Configuration.REBEL_THRESHOLD){
+            - susceptibility * (grievance - averageGrievance())>
+                Configuration.REBEL_THRESHOLD){
             this.isActive = true;
         }
-        else
-        {
-            this.isActive = false;
-        }
-        // if(this.isActive) logger.info("***found an active agent with extension!!!!!");
+        else this.isActive = false;
+
     }
 
+    /**
+     * Calculate the average grievance around this agent.
+     * @return double
+     */
     private double averageGrievance(){
         double sum = 0;
-        ArrayList<Patch> neiborhoods =  this.getCurrentPatch().getNeighborhood();
+        ArrayList<Patch> neiborhoods =  this.getCurrentPatch().
+                                        getNeighborhood();
         for(Patch patch : neiborhoods){
-            if(!patch.isCop() && !patch.isActiveAgent() && patch.getAgent()!= null)
+            if(!patch.isCop() && !patch.isActiveAgent() &&
+                patch.getAgent()!= null)
                 sum += patch.getAgent().returnGrievance();
         }
         return sum/neiborhoods.size();
@@ -100,16 +113,21 @@ protected static Random r = new Random();
         return this.isActive;
     }
 
+    /**
+     * Arrest this agent.
+     */
     public void arrest(){
         this.isActive = false;
         this.setJailTerm(randInt(0, maxJailTerm));
     }
 
-    private void generateSusceptibility(){
-        this.riskAversion = r.nextDouble();
+    /**
+     * Generate riskAversion, susceptibility and the perceivedHardship.
+     */
+    private void generateAttribute(){
+        this.riskAversion = Math.random();
         this.susceptibility = Math.random();
         this.perceivedHardship = Math.random();
-        // this.riskAversion = Math.random();
     }
 
     public int returnJailTerm()
