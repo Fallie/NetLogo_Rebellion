@@ -166,6 +166,7 @@ public class World {
 				//printPatch();
 
 				//calculate the agents for the output excel.
+				resetCount();
 				countAgents();
 
 				// M rule
@@ -174,8 +175,6 @@ public class World {
 
 				logger.info("cops are moving randomly");
 				randMove(cops);
-
-				resetCount();
 
 				// special modes, reduce gov gradually
 				if(it > 50 && this.graduallyChangeGov){
