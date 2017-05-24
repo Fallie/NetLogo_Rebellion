@@ -102,9 +102,12 @@ public class Agent extends Person {
         ArrayList<Patch> neiborhoods =  this.getCurrentPatch().
                                         getNeighborhood();
         for(Patch patch : neiborhoods){
-            if(!patch.isCop() && !patch.isActiveAgent() &&
-                patch.getAgent()!= null)
-                sum += patch.getAgent().returnGrievance();
+            if(!patch.isCop()){
+                if(patch.getAgent() != null)
+                    sum += patch.getAgent().returnGrievance();
+                if(patch.getSuspect() != null)
+                    sum += patch.getSuspect().returnGrievance();
+            }
         }
         return sum/neiborhoods.size();
     }

@@ -165,6 +165,9 @@ public class World {
 				// print out the pic
 				//printPatch();
 
+				//calculate the agents for the output excel.
+				countAgents();
+
 				// M rule
 				logger.info("agents are moving randomly");
 				randMove(agents);
@@ -204,9 +207,6 @@ public class World {
 				for(Agent agent : agents){
 					if(agent.getJailTerm() > 0) agent.reduceJailTerm();
 				}
-
-				//calculate the agents for the output excel.
-				countAgents();
 				
 				it ++;
 				//logger.info("world running iteration it :" + it);
