@@ -163,7 +163,7 @@ public class World {
 			int it= 0;
 			for(int i = ticks; i > 0; i--){
 				// print out the pic
-				//printPatch();
+				printPatch();
 
 				//calculate the agents for the output excel.
 				resetCount();
